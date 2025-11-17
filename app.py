@@ -2,10 +2,12 @@ import os
 from flask import Flask, request, jsonify
 from myjdapi import Myjdapi
 
-# --- Konfigurasi ---
 JD_EMAIL = os.getenv("JD_EMAIL")
 JD_PASSWORD = os.getenv("JD_PASSWORD")
 JD_DEVICE = os.getenv("JD_DEVICE")
+
+import logging
+logging.basicConfig(level=logging.INFO)
 
 app = Flask(__name__)
 jd_client = None
@@ -20,6 +22,12 @@ def get_jd_client():
         jd_client.connect(JD_EMAIL, JD_PASSWORD)
         jd_client.update_devices()
     return jd_client
+
+try:
+    get_jd_client()
+    logging.info("Successfully connected to MyJDownloader on startup.")
+except Exception as e:
+    logging.error(f"Failed to connect to MyJDownloader on startup: {e}", exc_info=True)
 
 @app.route('/add', methods=['POST'])
 def add_link():
@@ -57,11 +65,4 @@ def add_link():
         return jsonify({"success": False, "error": f"An error occurred: {str(e)}"}), 500
 
 if __name__ == '__main__':
-    try:
-        get_jd_client()
-        print("Successfully connected to MyJDownloader on startup.")
-    except Exception as e:
-        print(f"Failed to connect to MyJDownloader on startup: {e}")
-        pass
-        
-    app.run(host='0.0.0.0', port=5000)
+        app.run(host='0.0.0.0', port=5000)
