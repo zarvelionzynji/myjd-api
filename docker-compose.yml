@@ -1,11 +1,11 @@
 services:
     myjd-api:
+        image: ghcr.io/zarvelionzynji/myjd-api:latest
+        container_name: myjd-api
         ports:
             - 8069:5000
-        container_name: myjd-api
         environment:
             - JD_EMAIL=your@email
             - JD_PASSWORD=your_password
             - JD_DEVICE=your_device
         restart: unless-stopped
-        image: myjd-api
